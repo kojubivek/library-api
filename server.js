@@ -1,29 +1,37 @@
 import dotenv from "dotenv";
-
 dotenv.config();
-
 import express from "express";
-import { ERROR } from "./src/constant.js";
+import cors from "cors";
 
+import { ERROR } from "./src/constant.js";
 const app = express();
-import { connectDB } from "./src/congfig/dbCongif.js";
-import userRouter from "./src/router/userRouter.js";
-connectDB();
 const PORT = process.env.NODE_ENV || 8000;
+
+//connect to database
+import { connectDB } from "./src/congfig/dbCongif.js";
+connectDB();
+
+//middlewares
 app.use(express.json());
+app.use(cors());
+
+// api routers
+import userRouter from "./src/router/userRouter.js";
 
 app.use("/api/v1/user", userRouter);
 
-//all uncaught request
+// all uncaught request
 app.use("*", (req, res) => {
   res.json({
-    message: "Request resources not found",
+    message: "System status is healthy!",
   });
 });
 
 //global error handler
 app.use((error, req, res, next) => {
-  const errorCode = error.code || 500;
+  console.log(error.message);
+
+  const errorCode = error.errorCode || 500;
   res.status(errorCode).json({
     status: ERROR,
     message: error.message,
@@ -31,9 +39,8 @@ app.use((error, req, res, next) => {
 });
 
 //run the server
-
 app.listen(PORT, (error) => {
   error
     ? console.log(error)
-    : console.log(`server is running on port http://localhost:${PORT}`);
+    : console.log(`server is running at http://localhost:${PORT}`);
 });

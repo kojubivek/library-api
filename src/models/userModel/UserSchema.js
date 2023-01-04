@@ -1,11 +1,11 @@
 import mongoose from "mongoose";
-import { Active } from "../../constant";
+import { ACTIVE } from "../../constant.js";
 
 const userSchema = new mongoose.Schema(
   {
     status: {
       type: String,
-      default: Active,
+      default: ACTIVE,
     },
     fName: {
       type: String,
